@@ -1,0 +1,4 @@
+User-Agent: *
+Disallow:
+
+sitemap: https://behzadheydari.ir/sitemap.xml
