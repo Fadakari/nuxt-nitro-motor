@@ -27,8 +27,12 @@ export default defineNuxtConfig({
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
     'nuxt-schema-org',
-    '@nuxt/image'
+    '@nuxt/image',
+    '@nuxtjs/supabase'
   ],
+  supabase: {
+    redirect: false
+  },
 
   site: {
     url: 'https://behzadheydari.ir',

@@ -8,5 +8,4 @@ useSeoMeta({
 </script>
 
 <template>
-  <BlogSection />
 </template>

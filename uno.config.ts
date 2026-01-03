@@ -1,30 +1,45 @@
-// uno.config.ts
-import { defineConfig, presetUno, presetIcons, presetTypography, transformerDirectives } from 'unocss'
+import { defineConfig, presetUno, presetIcons, presetWebFonts } from 'unocss'
 
 export default defineConfig({
   presets: [
     presetUno(),
     presetIcons({
       scale: 1.2,
-      cdn: 'https://esm.sh/' // استفاده از CDN برای اطمینان از لود شدن
+      cdn: 'https://esm.sh/',
     }),
-    presetTypography(),
-  ],
-  transformers: [
-    transformerDirectives(),
-  ],
-  // لیست آیکون‌هایی که ممکن است در دیتابیس باشند تا UnoCSS حتما آنها را بسازد
-  safelist: [
-    'i-ph-pizza', 'i-ph-hamburger', 'i-ph-coffee', 'i-ph-cake', 
-    'i-ph-ice-cream', 'i-ph-beer-bottle', 'i-ph-bowl-food', 
-    'i-ph-fire', 'i-ph-leaf', 'i-ph-check', 'i-ph-x', 'i-ph-plus', 
-    'i-ph-trash', 'i-ph-pencil', 'i-ph-image', 'i-ph-upload',
-    'i-ph-caret-down', 'i-ph-caret-up'
+    presetWebFonts({
+      provider: 'google',
+      fonts: {
+        sans: 'Vazirmatn:400,700,900',
+      },
+    }),
   ],
   theme: {
     colors: {
-      primary: 'var(--primary-color)',
-      secondary: 'var(--secondary-color)',
+      bg: '#000000',
+      glass: 'rgba(20, 20, 20, 0.6)',
+      glassBorder: 'rgba(255, 255, 255, 0.1)',
+      primary: {
+        DEFAULT: '#D90429', 
+        hover: '#EF233C',
+        text: '#ffffff',
+      },
+      gold: {
+        DEFAULT: '#CCA43B',
+        light: '#E5C15D',
+        dim: '#856A20',
+      },
+      text: {
+        main: '#EEEEEE',
+        muted: '#9CA3AF',
+      }
     }
+  },
+  shortcuts: {
+    'glass-panel': 'bg-glass backdrop-blur-md border border-glassBorder rounded-2xl shadow-2xl',
+    'container-center': 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
+    'btn-primary': 'bg-primary text-white px-6 py-2 rounded-xl transition-all hover:bg-primary-hover hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(217,4,41,0.4)]',
+    'btn-gold': 'bg-transparent border border-gold text-gold px-6 py-2 rounded-xl transition-all hover:bg-gold hover:text-black hover:scale-105',
+    'heading-gold': 'text-gold font-bold tracking-wide',
   }
 })

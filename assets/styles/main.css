@@ -1,53 +1,31 @@
+/* تنظیمات کلی بادی و اسکرول بار */
 body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    direction: rtl;
-    font-family: 'MyCustomFont', sans-serif;
-    background-color: black;
-}
-@font-face {
-  font-family: 'MyCustomFont';
-  src: url('../fonts/Vazir.ttf') format('truetype'),
-        url('../fonts/Vazir.woff') format('woff'),
-        url('../fonts/Vazir.woff2') format('woff2');
-}
-
-
-:root {
-  --bg-color: #f8fafc; 
-  --text-color: #1e293b;
-  --primary-color: #38bdf8;
-}
-
-:global(.dark) {
-  :root {
-    --bg-color: #020617; 
-    --text-color: #f1f5f9;
-  }
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'MyCustomFont', sans-serif;
-}
-
-html, body {
-  width: 100%;
-  min-height: 100vh;
+  background-color: #000000;
+  color: #EEEEEE;
+  font-family: 'Vazirmatn', sans-serif; /* فونت از طریق UnoCSS لود می‌شود */
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
+  direction: rtl;
 }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Vazirmatn', sans-serif;
-  line-height: 1.6;
-  transition: background-color 0.3s ease, color 0.3s ease;
+/* اسکرول بار باریک و مدرن */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D90429; /* قرمز هنگام هاور */
 }
 
-html {
-  scroll-behavior: smooth;
+/* اصلاح فوکوس دکمه‌ها */
+:focus-visible {
+  outline: 2px solid #D90429;
+  outline-offset: 2px;
 }

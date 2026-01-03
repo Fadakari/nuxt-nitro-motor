@@ -1,18 +1,8 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-  const authCookie = useCookie('is-logged-in');
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  const client = useSupabaseClient()
+  const { data: { session } } = await client.auth.getSession()
 
-  console.log('Auth Middleware Check:', {
-    value: authCookie.value,
-    type: typeof authCookie.value
-  });
-
-  const isLoggedIn = String(authCookie.value) === 'true';
-
-  if (!isLoggedIn && to.path !== '/admin/login') {
-    return navigateTo('/admin/login');
+  if (!session && to.path.startsWith('/admin') && to.path !== '/admin/login') {
+    return navigateTo('/admin/login')
   }
-  
-  if (isLoggedIn && to.path === '/admin/login') {
-    return navigateTo('/admin');
-  }
-});
+})

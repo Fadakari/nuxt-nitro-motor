@@ -1,77 +1,134 @@
-<script setup>
-import { ref } from 'vue';
-
-definePageMeta({
-  layout: 'none',
-  // میدل‌ور را اینجا هم صدا می‌زنیم که اگر لاگین بود نگذارد این صفحه را ببیند
-  middleware: 'auth' 
-});
-
-const password = ref('');
-const error = ref('');
-const isLoading = ref(false);
-const { login } = useAuth();
-
-const handleLogin = async () => {
-  isLoading.value = true;
-  error.value = '';
-
-  try {
-    const success = await login(password.value);
-    
-    if (success) {
-        await navigateTo('/admin');
-    } else {
-      error.value = 'رمز عبور اشتباه است!';
-      if (process.client) {
-        const gsap = await import('gsap').then(m => m.gsap);
-        gsap.from('.error-msg', { x: -10, duration: 0.1, yoyo: true, repeat: 5 });
-      }
-    }
-  } catch (e) {
-    console.error("خطا:", e);
-    error.value = 'خطایی رخ داد.';
-  } finally {
-    isLoading.value = false;
-  }
-};
-</script>
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
-    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl p-8 border border-slate-100 dark:border-slate-700">
+  <div class="min-h-screen flex items-center justify-center px-4 bg-black relative overflow-hidden">
+    
+    <div class="absolute inset-0 z-0 opacity-20">
+      <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/40 blur-[100px] rounded-full animate-pulse"></div>
+      <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gold/30 blur-[100px] rounded-full animate-pulse delay-1000"></div>
+    </div>
+
+    <div class="glass-panel w-full max-w-md p-8 relative z-10 border border-white/10 shadow-2xl">
       
       <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-red-600 rounded-2xl mx-auto flex items-center justify-center text-3xl mb-4 shadow-lg shadow-red-500/30">🔐</div>
-        <h1 class="text-2xl font-black text-slate-800 dark:text-white">ورود به پنل مدیریت</h1>
+        <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-primary to-black rounded-2xl flex items-center justify-center mb-4 shadow-lg border border-white/10">
+          <span class="i-heroicons-musical-note text-3xl text-white"></span>
+        </div>
+        <h1 class="text-2xl font-bold text-white mb-2">مدیریت آکادمی</h1>
+        <p class="text-gray-400 text-sm">لطفاً برای ورود به پنل، احراز هویت کنید.</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
-        <div>
-          <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">رمز عبور</label>
-          <input 
-            v-model="password"
-            type="password" 
-            class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 focus:border-red-500 outline-none text-center tracking-widest text-lg"
-            placeholder="••••••••"
-            autofocus
-          />
+        
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gold uppercase tracking-wider">پست الکترونیک</label>
+          <div class="relative">
+            <input 
+              v-model="email"
+              type="email" 
+              placeholder="admin@ozanacademy.ir"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:border-primary focus:bg-white/10 outline-none transition-all text-left dir-ltr"
+              required
+            />
+            <span class="i-heroicons-envelope absolute right-4 top-3.5 text-gray-500"></span>
+          </div>
         </div>
 
-        <p v-if="error" class="error-msg text-red-500 text-sm font-bold text-center bg-red-50 dark:bg-red-900/20 py-2 rounded-lg">{{ error }}</p>
+        <div class="space-y-2">
+          <label class="text-xs font-bold text-gold uppercase tracking-wider">رمز عبور</label>
+          <div class="relative">
+            <input 
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'" 
+              placeholder="••••••••"
+              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 focus:border-primary focus:bg-white/10 outline-none transition-all text-left dir-ltr"
+              required
+            />
+            <button 
+              type="button"
+              @click="showPassword = !showPassword"
+              class="absolute right-4 top-3.5 text-gray-500 hover:text-white transition-colors"
+            >
+              <span :class="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"></span>
+            </button>
+          </div>
+        </div>
+
+        <div v-if="errorMsg" class="bg-red-500/10 border border-red-500/50 text-red-200 text-sm p-3 rounded-xl flex items-center gap-2 animate-shake">
+          <span class="i-heroicons-exclamation-circle text-lg"></span>
+          {{ errorMsg }}
+        </div>
 
         <button 
-          type="submit"
-          :disabled="isLoading"
-          class="w-full py-3.5 bg-slate-900 hover:bg-red-600 text-white rounded-xl font-bold transition-all duration-300 shadow-lg flex justify-center items-center gap-2"
+          type="submit" 
+          :disabled="loading"
+          class="w-full btn-primary py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span v-if="isLoading" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-          <span>{{ isLoading ? 'در حال بررسی...' : 'ورود به پنل' }}</span>
+          <span v-if="loading" class="i-heroicons-arrow-path animate-spin text-xl"></span>
+          <span>{{ loading ? 'در حال بررسی...' : 'ورود به پنل' }}</span>
         </button>
+
       </form>
       
-      <div class="mt-8 text-center">
-        <NuxtLink to="/" class="text-sm text-slate-400 hover:text-slate-600 transition-colors">← بازگشت به سایت</NuxtLink>
+      <div class="mt-6 text-center">
+        <NuxtLink to="/" class="text-sm text-gray-500 hover:text-white transition-colors">
+          بازگشت به صفحه اصلی
+        </NuxtLink>
       </div>
+
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const client = useSupabaseClient()
+const router = useRouter()
+
+const email = ref('')
+const password = ref('')
+const showPassword = ref(false)
+const loading = ref(false)
+const errorMsg = ref('')
+
+const handleLogin = async () => {
+  loading.value = true
+  errorMsg.value = ''
+
+  try {
+    const { error } = await client.auth.signInWithPassword({
+      email: email.value,
+      password: password.value
+    })
+
+    if (error) throw error
+
+    // موفقیت: هدایت به داشبورد
+    router.push('/admin')
+    
+  } catch (error: any) {
+    errorMsg.value = 'ایمیل یا رمز عبور اشتباه است.'
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// اگر کاربر قبلاً لاگین بود، مستقیم برود تو
+onMounted(async () => {
+  const { data } = await client.auth.getSession()
+  if (data.session) {
+    router.push('/admin')
+  }
+})
+</script>
+
+<style scoped>
+/* انیمیشن لرزش برای خطا */
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+</style>

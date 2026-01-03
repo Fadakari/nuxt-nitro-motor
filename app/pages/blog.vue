@@ -1,5 +1,4 @@
 <template>
-  <BlogSection />
 </template>
 
 <script setup>
