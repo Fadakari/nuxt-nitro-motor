@@ -26,11 +26,11 @@
           آکادمی موسیقی اوزان؛ جایی که نت‌ها جان می‌گیرند. با برترین اساتید و متد‌های روز دنیا، مسیر هنری خود را آغاز کنید.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 pt-4">
-          <NuxtLink to="/contact" class="btn-primary flex items-center justify-center gap-3 text-lg py-4 px-8 group">
+          <NuxtLink to="/classes" class="btn-primary no-underline flex items-center justify-center gap-3 text-lg py-4 px-8 group">
             <span>شروع ثبت‌نام</span>
             <span class="i-heroicons-arrow-left group-hover:-translate-x-1 transition-transform"></span>
           </NuxtLink>
-          <NuxtLink to="/services" class="btn-gold flex items-center justify-center gap-3 text-lg py-4 px-8 backdrop-blur-sm bg-black/20">
+          <NuxtLink to="/services" class="btn-gold no-underline flex items-center justify-center gap-3 text-lg py-4 px-8 backdrop-blur-sm bg-black/20">
             <span>مشاهده اساتید</span>
             <span class="i-heroicons-users"></span>
           </NuxtLink>

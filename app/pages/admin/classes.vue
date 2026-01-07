@@ -25,13 +25,20 @@
           <form @submit.prevent="saveClass" class="space-y-4">
             <div>
               <label class="text-xs text-gray-400 mb-1 block">عنوان کلاس</label>
-              <input v-model="form.title" type="text" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none">
+              <input v-model="form.title" type="text" required class="w-75 bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none">
             </div>
             <div>
               <label class="text-xs text-gray-400 mb-1 block">مدرس کلاس</label>
-              <select v-model="form.teacher_id" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none">
+              <select v-model="form.teacher_id" required class="w-75 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none">
                 <option value="" disabled>انتخاب کنید...</option>
                 <option v-for="t in teachersList" :key="t.id" :value="t.id">{{ t.full_name }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-gray-400 mb-1 block">دسته‌بندی کلاس</label>
+              <select v-model="form.category_id" class="w-75 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none">
+                <option value="" disabled>انتخاب دسته‌بندی...</option>
+                <option v-for="cat in categoriesList" :key="cat.id" :value="cat.id">{{ cat.title }}</option>
               </select>
             </div>
             <div>
@@ -46,11 +53,11 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-xs text-gray-400 mb-1 block">شهریه (تومان)</label>
-                <input v-model="form.price" type="number" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none text-left dir-ltr">
+                <input v-model="form.price" type="number" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none text-left dir-ltr">
               </div>
               <div>
                 <label class="text-xs text-gray-400 mb-1 block">مدت (دقیقه)</label>
-                <input v-model="form.duration_minutes" type="number" placeholder="30" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none text-center dir-ltr">
+                <input v-model="form.duration_minutes" type="number" placeholder="30" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-primary outline-none text-center dir-ltr">
               </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
@@ -148,6 +155,7 @@ const client = useSupabaseClient()
 const classes = ref([])
 const teachersList = ref([])
 const instrumentsList = ref([])
+const categoriesList = ref([])
 const fetching = ref(true) // <--- متغیر جدید
 const loading = ref(false)
 const isEditing = ref(false)
@@ -156,12 +164,18 @@ const editId = ref(null)
 const form = reactive({
   title: '',
   teacher_id: '',
+  category_id: '',
   price: '',
   duration_minutes: '',
   level: 'مبتدی',
   capacity_status: 'open',
   instrument_ids: [] as number[]
 })
+
+
+const { data: catData } = await client.from('class_categories').select('*')
+  categoriesList.value = catData || []
+
 
 const fetchData = async () => {
   fetching.value = true // <--- شروع لودینگ
@@ -173,7 +187,12 @@ const fetchData = async () => {
 
   const { data: cData } = await client
     .from('classes')
-    .select(`*, teachers (id, full_name), class_instruments (instruments (id, name))`)
+    .select(`
+      *,
+      teachers (id, full_name),
+      class_categories (id, title), 
+      class_instruments (instruments (id, name))
+    `)
     .order('created_at', { ascending: false })
   
   classes.value = cData || []
@@ -186,6 +205,7 @@ const saveClass = async () => {
     const classData = {
       title: form.title,
       teacher_id: form.teacher_id,
+      category_id: form.category_id || null,
       price: form.price,
       duration_minutes: form.duration_minutes,
       level: form.level,
@@ -223,6 +243,7 @@ const editClass = (cls: any) => {
   editId.value = cls.id
   form.title = cls.title
   form.teacher_id = cls.teacher_id
+  form.category_id = cls.category_id
   form.price = cls.price
   form.duration_minutes = cls.duration_minutes
   form.level = cls.level || 'مبتدی'
@@ -242,6 +263,7 @@ const resetForm = () => {
   editId.value = null
   form.title = ''
   form.teacher_id = ''
+  form.category_id = ''
   form.price = ''
   form.duration_minutes = ''
   form.level = 'مبتدی'

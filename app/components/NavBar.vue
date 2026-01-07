@@ -1,21 +1,21 @@
 <template>
   <nav 
     class="fixed top-0 inset-x-0 z-50 transition-all duration-500 border-b"
-    :class="scrolled ? 'bg-black/90 backdrop-blur-xl border-white/10 py-2' : 'bg-transparent border-transparent py-4'"
+    :class="scrolled ? 'bg-black/50 backdrop-blur-xl border-white/10 py-2' : 'bg-transparent border-transparent py-4'"
   >
     <div class="container-center">
       <div class="flex items-center justify-between">
         
-        <NuxtLink to="/" class="flex items-center gap-3 group relative z-50">
-          <div class="relative w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:border-gold transition-colors duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-            <img src="../../public/images/ozanimage.png" alt="Ozan Academy" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <NuxtLink to="/" class="flex items-center gap-3 group relative z-50 no-underline">
+          <div class="relative w-12 h-12 rounded-full bg-white/50 flex items-center justify-center overflow-hidden border-2 border-white/10 group-hover:border-gold duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+            <img src="/images/ozanimage.png" alt="Ozan Academy" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-tr from-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </div>
           <div class="flex flex-col">
-            <span class="text-xl font-black tracking-tight text-white group-hover:text-gold transition-colors">
+            <span class="text-xl font-black tracking-tight text-gold group-hover:text-white transition-colors no-underline">
               آکادمی اوزان
             </span>
-            <span class="text-[10px] text-gray-400 font-light tracking-widest opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <span class="text-[10px] text-gray-400 font-light tracking-widest transition-all duration-300 no-underline">
               OZAN MUSIC ACADEMY
             </span>
           </div>
@@ -26,7 +26,7 @@
             v-for="item in navItems" 
             :key="item.path" 
             :to="item.path"
-            class="relative px-5 py-2 text-sm font-medium text-gray-300 transition-all duration-300 rounded-full hover:text-white group"
+            class="relative px-5 py-2 text-sm font-medium text-gray-300 transition-all duration-300 rounded-full hover:text-white group no-underline"
             active-class="!text-black bg-gold shadow-[0_0_15px_rgba(204,164,59,0.4)]"
           >
             <span class="relative z-10 flex items-center gap-2">
@@ -38,7 +38,7 @@
 
         <div class="flex items-center gap-4">
           
-          <NuxtLink to="/admin/login" class="hidden md:flex items-center gap-2 text-xs font-bold text-gold border border-gold/30 px-4 py-2 rounded-xl hover:bg-gold hover:text-black transition-all">
+          <NuxtLink to="/admin/login" class="hidden md:flex items-center gap-2 text-xs font-bold text-gold border border-gold/30 px-4 py-2 rounded-xl hover:bg-gold hover:text-black transition-all no-underline">
             <span>پنل اساتید</span>
             <span class="i-heroicons-arrow-left"></span>
           </NuxtLink>
@@ -56,24 +56,24 @@
     </div>
 
     <Transition
-      enter-active-class="transition duration-500 cubic-bezier(0.16, 1, 0.3, 1)"
-      enter-from-class="translate-x-full opacity-0"
-      enter-to-class="translate-x-0 opacity-100"
-      leave-active-class="transition duration-300 ease-in"
-      leave-from-class="translate-x-0 opacity-100"
-      leave-to-class="translate-x-full opacity-0"
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 translate-x-full"
+      enter-to-class="opacity-100 translate-x-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 translate-x-0"
+      leave-to-class="opacity-0 translate-x-full"
     >
-      <div v-if="isOpen" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-24 pb-10 px-6 md:hidden">
+      <div v-if="isOpen" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-24 pb-10 px-6 md:hidden overflow-y-auto">
         
-        <div class="flex flex-col gap-4 flex-1 overflow-y-auto">
+        <div class="flex flex-col gap-3 flex-1">
           <NuxtLink 
             v-for="(item, index) in navItems" 
             :key="item.path" 
             :to="item.path"
             @click="toggleMenu"
-            class="flex items-center justify-between p-4 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group"
+            class="flex items-center justify-between p-4 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 active:scale-[0.98] transition-all group no-underline"
             active-class="!bg-primary/20 !border-primary/50"
-            :style="{ animation: `slideIn 0.4s ease-out ${index * 0.1}s forwards`, opacity: 0, transform: 'translateY(20px)' }"
+            :style="{ animation: `navSlideIn 0.5s ease-out ${index * 0.1}s forwards`, opacity: 0 }"
           >
             <div class="flex items-center gap-4">
               <div class="w-10 h-10 rounded-full bg-black/50 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors" :class="$route.path === item.path ? 'text-primary' : 'text-gray-400'">
@@ -85,16 +85,16 @@
           </NuxtLink>
         </div>
 
-        <div class="mt-auto border-t border-white/10 pt-6 space-y-4">
-          <NuxtLink to="/admin/login" @click="toggleMenu" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold text-black font-bold shadow-lg shadow-gold/20 active:scale-95 transition-transform">
+        <div class="mt-8 border-t border-white/10 pt-6 space-y-4">
+          <NuxtLink to="/admin/login" @click="toggleMenu" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold text-black font-bold shadow-lg shadow-gold/20 active:scale-95 transition-transform no-underline">
             <span class="i-heroicons-user"></span>
             <span>ورود به پنل مدیریت</span>
           </NuxtLink>
           
           <div class="flex justify-center gap-6 text-gray-500">
-            <a href="#" class="hover:text-white transition-colors"><span class="i-simple-icons-instagram text-2xl"></span></a>
-            <a href="#" class="hover:text-white transition-colors"><span class="i-simple-icons-telegram text-2xl"></span></a>
-            <a href="#" class="hover:text-white transition-colors"><span class="i-simple-icons-whatsapp text-2xl"></span></a>
+            <a href="#" class="hover:text-white transition-colors no-underline"><span class="i-simple-icons-instagram text-2xl"></span></a>
+            <a href="#" class="hover:text-white transition-colors no-underline"><span class="i-simple-icons-telegram text-2xl"></span></a>
+            <a href="#" class="hover:text-white transition-colors no-underline"><span class="i-simple-icons-whatsapp text-2xl"></span></a>
           </div>
         </div>
 
@@ -107,7 +107,6 @@
 const isOpen = ref(false)
 const scrolled = ref(false)
 
-// لیست آیتم‌ها همراه با آیکون
 const navItems = [
   { name: 'خانه', path: '/', icon: 'i-heroicons-home' },
   { name: 'اساتید', path: '/teachers', icon: 'i-heroicons-user-group' },
@@ -118,7 +117,6 @@ const navItems = [
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value
-  // قفل کردن اسکرول صفحه وقتی منو باز است
   if (isOpen.value) {
     document.body.style.overflow = 'hidden'
   } else {
@@ -126,7 +124,6 @@ const toggleMenu = () => {
   }
 }
 
-// تشخیص اسکرول برای تغییر رنگ پس‌زمینه نوبار
 const handleScroll = () => {
   scrolled.value = window.scrollY > 20
 }
@@ -140,9 +137,13 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-@keyframes slideIn {
-  to {
+<style>
+@keyframes navSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }

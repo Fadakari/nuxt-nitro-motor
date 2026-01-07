@@ -34,12 +34,12 @@
             
             <div>
               <label class="text-xs text-gray-400 mb-1 block">نام و نام خانوادگی</label>
-              <input v-model="form.full_name" type="text" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-gold outline-none" placeholder="مثال: استاد شجریان">
+              <input v-model="form.full_name" type="text" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-gold outline-none" placeholder="مثال: استاد شجریان">
             </div>
 
             <div>
               <label class="text-xs text-gray-400 mb-1 block">بیوگرافی کوتاه</label>
-              <textarea v-model="form.bio" rows="3" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-gold outline-none text-sm"></textarea>
+              <textarea v-model="form.bio" rows="3" class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-gold outline-none text-sm"></textarea>
             </div>
 
             <div>
@@ -87,7 +87,7 @@
                 <span v-if="loading" class="i-heroicons-arrow-path animate-spin"></span>
                 {{ isEditing ? 'ذخیره تغییرات' : 'ثبت استاد' }}
               </button>
-              <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 text-sm">
+              <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-black hover:bg-white/10 text-sm">
                 انصراف
               </button>
             </div>

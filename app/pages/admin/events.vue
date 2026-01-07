@@ -34,17 +34,17 @@
   
           <div>
             <label class="text-xs text-gray-400 mb-1 block">عنوان رویداد</label>
-            <input v-model="form.title" type="text" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none">
+            <input v-model="form.title" type="text" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none">
           </div>
         
           <div>
             <label class="text-xs text-gray-400 mb-1 block">خلاصه (برای کارت)</label>
-            <textarea v-model="form.description" rows="2" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-sm"></textarea>
+            <textarea v-model="form.description" rows="2" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-sm"></textarea>
           </div>
         
           <div>
             <label class="text-xs text-gray-400 mb-1 block">توضیحات کامل و جزئیات</label>
-            <textarea v-model="form.content" rows="6" class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-sm leading-relaxed" placeholder="متن کامل خبر یا جزئیات کنسرت..."></textarea>
+            <textarea v-model="form.content" rows="6" class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-sm leading-relaxed" placeholder="متن کامل خبر یا جزئیات کنسرت..."></textarea>
           </div>
         
           <div>
@@ -54,7 +54,7 @@
                 v-model="form.event_date" 
                 type="datetime-local" 
                 required 
-                class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-left dir-ltr"
+                class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-left dir-ltr"
               >
               </div>
           </div>

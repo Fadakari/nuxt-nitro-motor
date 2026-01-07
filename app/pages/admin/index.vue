@@ -63,6 +63,14 @@
           <span class="text-xs text-gray-500">مشاهده درخواست‌ها</span>
         </NuxtLink>
 
+        <NuxtLink to="/admin/categories" class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-white/5 active:scale-95 transition-all cursor-pointer group border border-white/10">
+          <div class="w-14 h-14 rounded-2xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors text-green-400">
+            <span class="i-heroicons-clipboard-document-list text-3xl"></span>
+          </div>
+          <span class="text-white font-bold">دسته بندی کلاس ها</span>
+          <span class="text-xs text-gray-500">اضافه، ویرایش یا حذف دسته بندی ها</span>
+        </NuxtLink>
+
       </div>
 
       <div class="glass-panel p-6 border border-white/10">
