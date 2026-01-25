@@ -149,15 +149,11 @@
 // دریافت رویدادهای مهم از دیتابیس
 const client = useSupabaseClient()
 
-const { data: events, pending } = await useAsyncData('important-events', async () => {
-  const { data } = await client
-    .from('events')
-    .select('*')
-    .eq('is_important', true) // فقط مهم‌ها
-    .order('created_at', { ascending: false }) // جدیدترین‌ها اول
-    .limit(2) // فقط ۲ تا رویداد رو نشون بده که صفحه شلوغ نشه
-  
-  return data
+const { data: events, pending } = await useAsyncData('important-events', () => 
+  $fetch('/api/events-cached'), 
+{
+  lazy: true,
+  server: false
 })
 
 // تابع عکس

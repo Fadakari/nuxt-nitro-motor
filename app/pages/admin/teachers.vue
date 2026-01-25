@@ -56,26 +56,9 @@
               </div>
             </div>
 
-            <div>
-              <label class="text-xs text-gray-400 mb-1 block">تصویر پروفایل</label>
-              <div class="flex items-center gap-4">
-                <div v-if="form.image_url" class="relative w-16 h-16 rounded-xl overflow-hidden border border-white/20">
-                  <img :src="getPublicUrl(form.image_url)" class="w-full h-full object-cover">
-                  <button type="button" @click="form.image_url = ''" class="absolute inset-0 bg-black/50 flex items-center justify-center text-red-500 opacity-0 hover:opacity-100 transition-opacity">
-                    <span class="i-heroicons-trash"></span>
-                  </button>
-                </div>
-                
-                <label class="flex-1 cursor-pointer">
-                  <div class="flex items-center justify-center gap-2 px-4 py-3 border border-dashed border-white/20 rounded-xl hover:bg-white/5 transition-colors text-gray-400 text-sm">
-                    <span v-if="uploading" class="i-heroicons-arrow-path animate-spin"></span>
-                    <span v-else class="i-heroicons-cloud-arrow-up"></span>
-                    <span>{{ uploading ? 'در حال آپلود...' : 'انتخاب عکس جدید' }}</span>
-                  </div>
-                  <input type="file" accept="image/*" class="hidden" @change="handleFileUpload">
-                </label>
-              </div>
-            </div>
+          <div class="mb-4">
+            <ImageUploader v-model="form.image_url" />
+          </div>
 
             <div class="flex items-center gap-2">
                <input type="checkbox" v-model="form.is_active" id="activeCheck" class="w-4 h-4 accent-green-500">

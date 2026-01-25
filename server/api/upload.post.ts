@@ -1,24 +1,40 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import { readMultipartFormData } from 'h3';
+// server/api/upload.post.ts
+import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const body = await readMultipartFormData(event);
-  if (!body) throw createError({ statusCode: 400, message: 'فایلی ارسال نشد' });
-
-  const file = body.find(item => item.name === 'file');
-  if (!file || !file.filename) throw createError({ statusCode: 400, message: 'فایل نامعتبر است' });
-
-  const ext = path.extname(file.filename);
-  const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
-  const uploadDir = path.resolve(process.cwd(), 'public/uploads');
-
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  // دریافت فایل از فرم
+  const files = await readMultipartFormData(event)
+  if (!files || files.length === 0) {
+    throw createError({ statusCode: 400, message: 'فایلی ارسال نشد' })
   }
 
-  const filePath = path.join(uploadDir, uniqueName);
-  fs.writeFileSync(filePath, file.data);
+  const file = files.find(f => f.name === 'file')
+  if (!file || !file.filename) {
+    throw createError({ statusCode: 400, message: 'فایل نامعتبر است' })
+  }
 
-  return { url: `/uploads/${uniqueName}` };
-});
+  const client = await serverSupabaseClient(event)
+  
+  // ساخت نام یکتا برای فایل
+  const ext = file.filename.split('.').pop()
+  const fileName = `${Date.now()}-${Math.round(Math.random() * 1E9)}.${ext}`
+  const filePath = `uploads/${fileName}` // ذخیره در پوشه uploads داخل باکت
+
+  // آپلود به باکت images در سوپابیس
+  const { data, error } = await client
+    .storage
+    .from('images') // مطمئن شو نام باکت در پنل سوپابیس images باشد
+    .upload(filePath, file.data, {
+      contentType: file.type,
+      upsert: false
+    })
+
+  if (error) {
+    console.error('Upload Error:', error)
+    throw createError({ statusCode: 500, message: 'خطا در آپلود به سوپابیس' })
+  }
+
+  // برگرداندن مسیر فایل (فقط مسیر نسبی)
+  // در فرانت‌اند این مسیر به getPublicUrl داده میشه
+  return { url: filePath }
+})

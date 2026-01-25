@@ -1,161 +1,175 @@
-<script setup>
-const props = defineProps(['modelValue']);
-const emit = defineEmits(['update:modelValue', 'close']);
+<script setup lang="ts">
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['update:modelValue', 'close'])
 
-const images = ref([]);
-const isUploading = ref(false);
-const loadedImages = ref(new Set()); 
+const client = useSupabaseClient()
+const images = ref([])
+const loading = ref(false)
+const uploading = ref(false)
+const uploadProgress = ref(0)
 
+// دریافت لیست تصاویر از پوشه uploads
 const fetchImages = async () => {
-  const data = await $fetch('/api/images');
-  images.value = data;
-};
+  loading.value = true
+  const { data, error } = await client
+    .storage
+    .from('images')
+    .list('uploads', {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'desc' },
+    })
 
-const onImageLoad = (imgSrc) => {
-  loadedImages.value.add(imgSrc);
-};
+  if (data) {
+    // فیلتر کردن فایل‌های سیستمی و ساخت مسیر کامل
+    images.value = data
+      .filter(x => x.name !== '.emptyFolderPlaceholder')
+      .map(x => ({
+        name: x.name,
+        path: `uploads/${x.name}`, // مسیر نسبی در باکت
+        url: client.storage.from('images').getPublicUrl(`uploads/${x.name}`).data.publicUrl
+      }))
+  }
+  loading.value = false
+}
 
-const handleUpload = async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
+// آپلود تصویر جدید
+const handleUpload = async (event: any) => {
+  const file = event.target.files[0]
+  if (!file) return
 
-  isUploading.value = true;
-  const formData = new FormData();
-  formData.append('file', file);
+  uploading.value = true
+  uploadProgress.value = 0
+  
+  // شبیه‌سازی درصد پیشرفت (چون کلاینت سوپابیس درصد دقیق نمیده)
+  const interval = setInterval(() => {
+    if (uploadProgress.value < 90) uploadProgress.value += 10
+  }, 100)
 
   try {
-    const data = await $fetch('/api/upload', { method: 'POST', body: formData });
-    await fetchImages(); 
-    selectImage(data.url);
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.floor(Math.random() * 1000)}.${fileExt}`
+    const filePath = `uploads/${fileName}`
+
+    const { error } = await client.storage
+      .from('images')
+      .upload(filePath, file)
+
+    if (error) throw error
+
+    clearInterval(interval)
+    uploadProgress.value = 100
+    
+    await fetchImages() // رفرش لیست
+    
   } catch (error) {
-    alert('خطا در آپلود');
+    alert('خطا در آپلود تصویر')
+    console.error(error)
   } finally {
-    isUploading.value = false;
+    clearInterval(interval)
+    uploading.value = false
   }
-};
+}
 
-const handleDelete = async (imagePath) => {
-  if (!confirm('آیا این تصویر حذف شود؟')) return;
-  try {
-    await $fetch('/api/delete-image', {
-      method: 'POST',
-      body: { imagePath }
-    });
-    // حذف از کش
-    loadedImages.value.delete(imagePath);
-    // حذف از آرایه محلی برای آپدیت سریع‌تر UI
-    images.value = images.value.filter(img => img !== imagePath);
-  } catch (e) {
-    alert('خطا در حذف');
+// حذف تصویر
+const handleDelete = async (imagePath: string) => {
+  if (!confirm('آیا از حذف این تصویر مطمئن هستید؟')) return
+
+  const { error } = await client.storage
+    .from('images')
+    .remove([imagePath])
+
+  if (!error) {
+    await fetchImages()
+    // اگر تصویر حذف شده همان تصویر انتخاب شده بود، انتخاب را لغو کن
+    if (props.modelValue === imagePath) {
+      emit('update:modelValue', '')
+    }
+  } else {
+    alert('خطا در حذف تصویر')
   }
-};
+}
 
-const selectImage = (url) => {
-  emit('update:modelValue', url);
-  emit('close');
-};
+// انتخاب تصویر
+const selectImage = (imagePath: string) => {
+  emit('update:modelValue', imagePath)
+  emit('close')
+}
 
-onMounted(fetchImages);
+onMounted(() => {
+  fetchImages()
+})
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition duration-300 ease-out"
-      enter-from-class="opacity-0"
-      enter-to-class="opacity-100"
-      leave-active-class="transition duration-200 ease-in"
-      leave-from-class="opacity-100"
-      leave-to-class="opacity-0"
-    >
-      <div 
-        @click="$emit('close')"
-        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100000]"
-      ></div>
-    </Transition>
+  <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="$emit('close')"></div>
+    
+    <div class="relative w-full max-w-4xl bg-[#111] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+      
+      <div class="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
+        <h3 class="text-white font-bold flex items-center gap-2">
+          <span class="i-heroicons-photo text-gold"></span>
+          مدیریت تصاویر
+        </h3>
+        <button @click="$emit('close')" class="text-gray-400 hover:text-white transition-colors">
+          <span class="i-heroicons-x-mark text-2xl"></span>
+        </button>
+      </div>
 
-    <Transition
-      enter-active-class="transition-all duration-500 cubic-bezier(0.32, 0.72, 0, 1)"
-      enter-from-class="translate-y-full opacity-0 sm:translate-y-10 sm:scale-95"
-      enter-to-class="translate-y-0 opacity-100 sm:translate-y-0 sm:scale-100"
-      leave-active-class="transition-all duration-300 cubic-bezier(0.32, 0.72, 0, 1)"
-      leave-from-class="translate-y-0 opacity-100 sm:scale-100"
-      leave-to-class="translate-y-full opacity-0 sm:scale-95"
-    >
-      <div 
-        class="fixed inset-x-0 bottom-0 sm:inset-0 sm:flex sm:items-center sm:justify-center z-[100001] pointer-events-none"
-      >
-        <div class="pointer-events-auto bg-white dark:bg-[#1E2025] w-full sm:w-full sm:max-w-3xl h-[85vh] sm:h-[80vh] rounded-t-[32px] sm:rounded-[32px] shadow-2xl flex flex-col overflow-hidden border-t border-white/10 sm:border-t-0 ring-1 ring-black/5">
+      <div class="flex-1 overflow-y-auto p-6 bg-black/50">
+        
+        <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div v-for="i in 4" :key="i" class="aspect-square bg-white/5 rounded-xl animate-pulse"></div>
+        </div>
+
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
           
-          <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-white/5 bg-white dark:bg-[#1E2025] z-20">
-            <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
-              <span class="i-ph-images-square text-primary text-2xl"></span>
-              گالری تصاویر
-            </h3>
-            <button 
-              @click="$emit('close')" 
-              class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition-colors"
-            >
-              <span class="i-ph-x text-xl"></span>
-            </button>
-          </div>
+          <label class="aspect-square rounded-xl border-2 border-dashed border-white/20 hover:border-gold/50 hover:bg-white/5 transition-all flex flex-col items-center justify-center cursor-pointer group relative overflow-hidden">
+            <input type="file" accept="image/*" class="hidden" @change="handleUpload" :disabled="uploading">
+            
+            <div v-if="uploading" class="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-10">
+              <span class="i-heroicons-arrow-path animate-spin text-2xl text-gold mb-2"></span>
+              <span class="text-xs text-gold font-mono">{{ uploadProgress }}%</span>
+            </div>
 
-          <div class="flex-grow overflow-y-auto p-5 bg-slate-50 dark:bg-[#111315]">
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-              
-              <label class="aspect-square rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 hover:border-primary hover:bg-primary/5 bg-white dark:bg-white/5 flex flex-col items-center justify-center cursor-pointer transition-all group relative overflow-hidden">
-                <input type="file" accept="image/*" class="hidden" @change="handleUpload">
-                <span v-if="isUploading" class="i-ph-spinner animate-spin text-3xl text-primary"></span>
-                <template v-else>
-                  <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                    <span class="i-ph-plus text-xl text-slate-500 dark:text-slate-300 group-hover:text-primary"></span>
-                  </div>
-                  <span class="text-[10px] font-bold text-slate-500 group-hover:text-primary transition-colors">آپلود جدید</span>
-                </template>
-              </label>
+            <span class="i-heroicons-cloud-arrow-up text-4xl text-gray-500 group-hover:text-gold transition-colors mb-2"></span>
+            <span class="text-xs text-gray-400 group-hover:text-white">آپلود تصویر جدید</span>
+          </label>
 
-              <div 
-                v-for="img in images" 
-                :key="img"
-                class="relative group aspect-square rounded-2xl overflow-hidden border-2 cursor-pointer transition-all duration-200 bg-gray-100 dark:bg-gray-800"
-                :class="modelValue === img 
-                  ? 'border-primary ring-2 ring-primary/20' 
-                  : 'border-transparent hover:shadow-lg'"
-                @click="selectImage(img)"
-              >
-                <div v-if="!loadedImages.has(img)" class="absolute inset-0 z-10 animate-pulse bg-gray-200 dark:bg-gray-700"></div>
-
-                <img 
-                  :src="img" 
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                  loading="lazy"
-                  @load="onImageLoad(img)"
-                >
-                
-                <div v-if="modelValue === img" class="absolute inset-0 bg-primary/20 flex items-center justify-center backdrop-blur-[1px] z-20">
-                  <div class="bg-primary text-white rounded-full p-1.5 shadow-lg transform scale-110 animate-[bounce_0.3s]">
-                    <span class="i-ph-check text-xl font-bold"></span>
-                  </div>
-                </div>
-
+          <div 
+            v-for="img in images" 
+            :key="img.path" 
+            class="group relative aspect-square rounded-xl overflow-hidden border border-white/10 bg-gray-900 cursor-pointer hover:border-gold transition-all"
+            :class="{ 'ring-2 ring-gold ring-offset-2 ring-offset-black': modelValue === img.path }"
+            @click="selectImage(img.path)"
+          >
+            <img :src="img.url" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy">
+            
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div class="flex gap-2">
                 <button 
-                  @click.stop="handleDelete(img)"
-                  class="absolute top-1 right-1 w-8 h-8 flex items-center justify-center bg-white/90 dark:bg-black/60 text-red-500 rounded-full shadow-sm backdrop-blur-sm z-30 hover:bg-red-500 hover:text-white transition-all active:scale-90"
-                  title="حذف تصویر"
+                  @click.stop="handleDelete(img.path)" 
+                  class="w-8 h-8 rounded-full bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"
+                  title="حذف"
                 >
-                  <span class="i-ph-trash text-sm"></span>
+                  <span class="i-heroicons-trash text-sm"></span>
                 </button>
               </div>
+            </div>
 
+            <div v-if="modelValue === img.path" class="absolute top-2 right-2 w-6 h-6 bg-gold text-black rounded-full flex items-center justify-center shadow-lg">
+              <span class="i-heroicons-check text-xs font-bold"></span>
             </div>
           </div>
 
-          <div class="p-4 bg-white dark:bg-[#1E2025] border-t border-slate-100 dark:border-white/5 text-center text-xs text-slate-400 font-medium">
-            {{ images.length }} تصویر در گالری
-          </div>
-
         </div>
+
+        <div v-if="!loading && images.length === 0" class="text-center py-10 text-gray-500">
+          هیچ تصویری یافت نشد. اولین تصویر را آپلود کنید.
+        </div>
+
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </div>
 </template>

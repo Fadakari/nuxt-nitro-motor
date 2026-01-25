@@ -12,14 +12,21 @@
             <p class="text-gray-400 text-sm">دوره‌های تخصصی موسیقی؛ همین حالا آنلاین رزرو کنید.</p>
           </div>
           
-          <div class="flex gap-3">
-             <select v-model="selectedLevel" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-primary transition-colors text-sm">
+          <div class="flex flex-wrap gap-3">
+            
+            <select v-model="selectedTeacher" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-primary transition-colors text-sm">
+              <option :value="null">همه اساتید</option>
+              <option v-for="t in teachersList" :key="t.id" :value="t.id">{{ t.full_name }}</option>
+            </select>
+
+            <select v-model="selectedLevel" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-primary transition-colors text-sm">
               <option value="">همه سطوح</option>
               <option value="مبتدی">مبتدی</option>
               <option value="متوسط">متوسط</option>
               <option value="پیشرفته">پیشرفته</option>
             </select>
-             <select v-model="selectedInstrument" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-primary transition-colors text-sm">
+            
+            <select v-model="selectedInstrument" class="bg-black border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-primary transition-colors text-sm">
               <option value="">همه سازها</option>
               <option v-for="inst in instruments" :key="inst.id" :value="inst.id">{{ inst.name }}</option>
             </select>
@@ -127,11 +134,11 @@
           <form @submit.prevent="submitRegistration" class="space-y-4">
             <div>
               <label class="text-xs text-gray-300 mb-1 block">نام و نام خانوادگی</label>
-              <input v-model="form.full_name" type="text" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none">
+              <input v-model="form.full_name" type="text" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none">
             </div>
             <div>
               <label class="text-xs text-gray-300 mb-1 block">شماره تماس</label>
-              <input v-model="form.phone" type="tel" required class="w-full bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none dir-ltr text-right">
+              <input v-model="form.phone" type="tel" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none dir-ltr text-right">
             </div>
             <button type="submit" :disabled="submitting" class="w-full btn-primary py-3 rounded-xl font-bold flex justify-center items-center gap-2">
               <span v-if="submitting" class="i-heroicons-arrow-path animate-spin"></span>
@@ -147,31 +154,39 @@
 
 <script setup lang="ts">
 const client = useSupabaseClient()
+const route = useRoute()
 
-// فیلترها (نکته: selectedCategory به صورت پیش‌فرض null است)
+// اصلاح متغیر: مقداردهی اولیه از URL
+const selectedTeacher = ref<number | null>(route.query.teacher ? Number(route.query.teacher) : null)
+
 const selectedCategory = ref<number | null>(null)
 const selectedInstrument = ref('')
 const selectedLevel = ref('')
 
-// مودال
 const showModal = ref(false)
 const selectedClass = ref(null)
 const submitting = ref(false)
 const form = reactive({ full_name: '', phone: '' })
 
-// ۱. دریافت دسته‌ها
+// دریافت لیست اساتید
+const { data: teachersList } = await useAsyncData('teachers_list_filter', async () => {
+  const { data } = await client.from('teachers').select('id, full_name').eq('is_active', true)
+  return data || []
+})
+
+// دریافت دسته‌ها
 const { data: categories } = await useAsyncData('categories_list', async () => {
   const { data } = await client.from('class_categories').select('*')
   return data || []
 })
 
-// ۲. دریافت سازها
+// دریافت سازها
 const { data: instruments } = await useAsyncData('instruments_list', async () => {
   const { data } = await client.from('instruments').select('*')
   return data || []
 })
 
-// ۳. دریافت کلاس‌ها (استفاده از pending خود Nuxt)
+// دریافت کلاس‌ها
 const { data: classes, pending } = await useAsyncData('classes_list', async () => {
   const { data } = await client.from('classes')
     .select(`*, teachers (full_name), class_categories(id, title), class_instruments (instruments (id, name))`)
@@ -179,28 +194,32 @@ const { data: classes, pending } = await useAsyncData('classes_list', async () =
   return data || []
 })
 
-// ۴. فیلتر کردن اصلاح شده
+// اضافه کردن Watch برای تغییرات URL (مثلاً وقتی کاربر دکمه Back را می‌زند)
+watch(() => route.query.teacher, (newVal) => {
+  selectedTeacher.value = newVal ? Number(newVal) : null
+})
+
+// فیلترینگ
 const filteredClasses = computed(() => {
   if (!classes.value) return []
   
   return classes.value.filter(c => {
-    // فیلتر سطح
     const matchLevel = selectedLevel.value ? c.level === selectedLevel.value : true
     
-    // فیلتر دسته (نکته: اگر selectedCategory نال بود، یعنی "همه" انتخاب شده)
-    // دقت کنید: ما مقادیر را با == چک نمیکنیم، از === استفاده میکنیم، پس نوع متغیر مهمه
+    // مقایسه category با id (عدد)
     const matchCategory = selectedCategory.value 
       ? c.category_id === selectedCategory.value 
       : true
+    
+    // مقایسه teacher با id (عدد)
+    const matchTeacher = selectedTeacher.value ? c.teacher_id == selectedTeacher.value : true
 
-    // فیلتر ساز
     let matchInstrument = true
     if (selectedInstrument.value) {
-      // اگر آیدی ساز عددی است، باید تبدیل کنیم یا مطمئن شویم
       matchInstrument = c.class_instruments?.some((rel: any) => rel.instruments?.id == selectedInstrument.value)
     }
 
-    return matchLevel && matchCategory && matchInstrument
+    return matchLevel && matchCategory && matchInstrument && matchTeacher
   })
 })
 

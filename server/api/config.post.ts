@@ -1,19 +1,29 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
+  const body = await readBody(event)
+  const client = await serverSupabaseClient(event)
+
   try {
-    const body = await readBody(event);
-    const filePath = path.resolve(process.cwd(), 'site-data.json');
+    // تبدیل آبجکت به رشته جیسون
+    const jsonString = JSON.stringify(body, null, 2)
 
-    // ذخیره کردن تغییرات روی فایل اصلی
-    fs.writeFileSync(filePath, JSON.stringify(body, null, 2), 'utf-8');
+    // آپلود (بازنویسی) فایل تنظیمات در باکت
+    const { error } = await client
+      .storage
+      .from('images') // همان باکتی که در get استفاده کردید
+      .upload('site-data.json', jsonString, {
+        contentType: 'application/json',
+        upsert: true // این گزینه مهم است: فایل قبلی را جایگزین می‌کند
+      })
 
-    return { success: true, message: 'Settings updated successfully' };
+    if (error) throw error
+
+    return { success: true, message: 'Settings updated successfully' }
   } catch (error) {
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to save settings',
-    });
+    })
   }
-});
+})

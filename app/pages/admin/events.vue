@@ -47,7 +47,7 @@
             <textarea v-model="form.content" rows="6" class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-sm leading-relaxed" placeholder="متن کامل خبر یا جزئیات کنسرت..."></textarea>
           </div>
         
-          <div>
+          <!-- <div>
             <label class="text-xs text-gray-400 mb-1 block">تاریخ برگزاری</label>
             <div class="relative">
               <input 
@@ -57,26 +57,10 @@
                 class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-500 outline-none text-left dir-ltr"
               >
               </div>
-          </div>
+          </div> -->
         
-          <div>
-            <label class="text-xs text-gray-400 mb-1 block">تصویر کاور</label>
-            <div class="flex items-center gap-4">
-              <div v-if="form.image_url" class="relative w-16 h-16 rounded-xl overflow-hidden border border-white/20">
-                <img :src="getPublicUrl(form.image_url)" class="w-full h-full object-cover">
-                <button type="button" @click="form.image_url = ''" class="absolute inset-0 bg-black/50 flex items-center justify-center text-red-500 opacity-0 hover:opacity-100 transition-opacity">
-                  <span class="i-heroicons-trash"></span>
-                </button>
-              </div>
-              <label class="flex-1 cursor-pointer">
-                <div class="flex items-center justify-center gap-2 px-4 py-3 border border-dashed border-white/20 rounded-xl hover:bg-white/5 transition-colors text-gray-400 text-sm">
-                  <span v-if="uploading" class="i-heroicons-arrow-path animate-spin"></span>
-                  <span v-else class="i-heroicons-cloud-arrow-up"></span>
-                  <span>{{ uploading ? 'آپلود...' : 'انتخاب تصویر' }}</span>
-                </div>
-                <input type="file" accept="image/*" class="hidden" @change="handleFileUpload">
-              </label>
-            </div>
+          <div class="mb-4">
+            <ImageUploader v-model="form.image_url" />
           </div>
         
           <div class="flex items-center gap-2 bg-purple-500/10 p-3 rounded-lg border border-purple-500/20">
@@ -88,7 +72,7 @@
             <button type="submit" :disabled="loading" class="flex-1 btn-primary bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
               {{ isEditing ? 'بروزرسانی' : 'انتشار رویداد' }}
             </button>
-            <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 text-sm">
+            <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-black hover:bg-white/10 text-sm">
               انصراف
             </button>
           </div>
@@ -202,7 +186,7 @@ const saveEvent = async () => {
       description: form.description,
       content: form.content,
       image_url: form.image_url,
-      event_date: form.event_date,
+      event_date: form.event_date || new Date().toISOString(),
       is_important: form.is_important
     }
 
@@ -227,13 +211,7 @@ const editEvent = (ev: any) => {
   form.content = ev.content
   form.image_url = ev.image_url
   form.is_important = ev.is_important
-  // تبدیل تاریخ برای اینپوت
-  if (ev.event_date) {
-    const date = new Date(ev.event_date)
-    // تنظیم فرمت مناسب برای datetime-local
-    date.setMinutes(date.getMinutes() - date.getTimezoneOffset())
-    form.event_date = date.toISOString().slice(0, 16)
-  }
+
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 

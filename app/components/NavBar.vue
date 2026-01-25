@@ -63,9 +63,12 @@
       leave-from-class="opacity-100 translate-x-0"
       leave-to-class="opacity-0 translate-x-full"
     >
-      <div v-if="isOpen" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-24 pb-10 px-6 md:hidden overflow-y-auto">
+      <div 
+        v-if="isOpen" 
+        class="fixed top-0 left-0 w-full h-[100dvh] z-40 bg-black/95 backdrop-blur-2xl flex flex-col pt-24 pb-10 px-0 md:hidden overflow-y-auto"
+      >
         
-        <div class="flex flex-col gap-3 flex-1">
+        <div class="flex flex-col gap-3 flex-1 px-3">
           <NuxtLink 
             v-for="(item, index) in navItems" 
             :key="item.path" 

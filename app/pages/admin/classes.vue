@@ -81,7 +81,7 @@
               <button type="submit" :disabled="loading" class="flex-1 btn-primary py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
                 {{ isEditing ? 'ذخیره تغییرات' : 'ثبت کلاس جدید' }}
               </button>
-              <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-white hover:bg-white/10 text-sm">
+              <button v-if="isEditing" type="button" @click="resetForm" class="px-4 py-2 border border-white/20 rounded-lg text-black hover:bg-white/10 text-sm">
                 انصراف
               </button>
             </div>

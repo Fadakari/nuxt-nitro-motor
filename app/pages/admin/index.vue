@@ -71,6 +71,14 @@
           <span class="text-xs text-gray-500">اضافه، ویرایش یا حذف دسته بندی ها</span>
         </NuxtLink>
 
+        <NuxtLink to="/admin/media" class="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-colors group text-center no-underline border border-white/10">
+          <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <span class="i-heroicons-photo text-cyan-400 text-xl"></span>
+          </div>
+          <span class="text-sm font-bold text-gray-200">گالری تصاویر</span>
+          <span class="text-[10px] text-gray-500">آپلود و حذف فایل</span>
+        </NuxtLink>
+
       </div>
 
       <div class="glass-panel p-6 border border-white/10">

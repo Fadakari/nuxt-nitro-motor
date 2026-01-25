@@ -1,28 +1,25 @@
-import fs from 'node:fs';
-import path from 'node:path';
+// server/api/delete-image.post.ts
+import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
-  const { imagePath } = body;
+  const body = await readBody(event)
+  const imagePath = body.imagePath // مثلا: uploads/filename.jpg
 
   if (!imagePath) {
-    throw createError({ statusCode: 400, message: 'مسیر فایل الزامی است' });
+    throw createError({ statusCode: 400, message: 'مسیر فایل الزامی است' })
   }
 
-  if (!imagePath.includes('/uploads/')) {
-    throw createError({ statusCode: 403, message: 'حذف فایل‌های سیستمی مجاز نیست' });
+  const client = await serverSupabaseClient(event)
+
+  // حذف فایل از باکت images
+  const { error } = await client
+    .storage
+    .from('images')
+    .remove([imagePath])
+
+  if (error) {
+    throw createError({ statusCode: 500, message: 'خطا در حذف فایل' })
   }
 
-  const filePath = path.join(process.cwd(), 'public', imagePath);
-
-  try {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      return { success: true, message: 'فایل حذف شد' };
-    } else {
-      return { success: false, message: 'فایل پیدا نشد' };
-    }
-  } catch (error) {
-    throw createError({ statusCode: 500, message: 'خطا در حذف فایل' });
-  }
-});
+  return { success: true }
+})

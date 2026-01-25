@@ -1,16 +1,28 @@
-import fs from 'node:fs';
-import path from 'node:path';
+// server/api/images.get.ts
+import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
-  const uploadDir = path.resolve(process.cwd(), 'public/uploads');
-  
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  const client = await serverSupabaseClient(event)
+
+  // لیست کردن فایل‌های پوشه uploads از باکت images
+  const { data, error } = await client
+    .storage
+    .from('images')
+    .list('uploads', {
+      limit: 100,
+      offset: 0,
+      sortBy: { column: 'created_at', order: 'desc' },
+    })
+
+  if (error) {
+    return []
   }
 
-  const files = fs.readdirSync(uploadDir);
-  
-  const images = files.filter(file => /\.(jpg|jpeg|png|webp|svg|gif)$/i.test(file));
-  
-  return images.map(file => `/uploads/${file}`);
-});
+  // تبدیل فرمت خروجی به آرایه‌ای از آدرس‌ها
+  // نکته: ما آدرس کامل برنمی‌گردانیم، بلکه getPublicUrl در فرانت این کار را می‌کند
+  const images = data
+    .filter(file => file.name !== '.emptyFolderPlaceholder') // حذف فایل‌های سیستمی
+    .map(file => `uploads/${file.name}`)
+
+  return images
+})

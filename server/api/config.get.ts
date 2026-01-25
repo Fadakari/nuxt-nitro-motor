@@ -1,18 +1,30 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
+  const client = await serverSupabaseClient(event)
+
   try {
-    // مسیر فایل جیسون در روت پروژه
-    const filePath = path.resolve(process.cwd(), 'site-data.json');
-    
-    if (!fs.existsSync(filePath)) {
-      return { error: 'Configuration file not found' };
+    // دانلود فایل تنظیمات از باکت
+    const { data, error } = await client
+      .storage
+      .from('images') // یا یک باکت جداگانه مثل 'configs' بسازید
+      .download('site-data.json')
+
+    if (error) {
+      // اگر فایل نبود، یک تنظیمات پیش‌فرض برگردان
+      return {
+        meta: { version: '1.0.0', lastUpdated: Date.now() },
+        business: {},
+        appearance: {},
+        categories: []
+      }
     }
 
-    const data = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(data);
+    // خواندن محتوای متنی فایل
+    const text = await data.text()
+    return JSON.parse(text)
+    
   } catch (error) {
-    return { error: 'Failed to read configuration' };
+    return { error: 'Failed to read configuration' }
   }
-});
+})

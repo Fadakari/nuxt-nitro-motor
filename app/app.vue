@@ -40,5 +40,30 @@ body {
   background-color: #000000;
   color: #eeeeee;
   margin: 0;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 6px; /* ضخامت خیلی نازک */
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a; /* رنگ پس‌زمینه ریل اسکرول (تیره) */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #856A20, #CCA43B); /* گرادینت طلایی */
+  border-radius: 10px; /* گرد کردن لبه‌ها */
+  border: 1px solid rgba(0,0,0,0.3); /* فاصله جزئی برای زیبایی */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E5C15D; /* رنگ روشن‌تر هنگام هاور */
+}
+
+/* برای فایرفاکس */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #CCA43B #0a0a0a;
 }
 </style>
