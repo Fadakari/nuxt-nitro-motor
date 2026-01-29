@@ -1,5 +1,4 @@
 <script setup>
-import BlogSection from '~/components/BlogSection.vue';
 
 useSeoMeta({
   title: 'مقالات و آموزش‌ها | بهزاد حیدری',
