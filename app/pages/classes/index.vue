@@ -126,19 +126,19 @@
       <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="closeModal"></div>
         <div class="relative glass-panel w-full max-w-md p-6 border border-gold/30 shadow-2xl">
-          <button @click="closeModal" class="absolute left-4 top-4 text-gray-400 hover:text-white">
-            <span class="i-heroicons-x-mark text-2xl"></span>
+          <button @click="closeModal" class="absolute left-4 top-4 transition-all rounded-[1rem] p-1 px-3 bg-dark-1 text-red-400 hover:text-white hover:bg-white/30">
+            بستن
           </button>
           <h3 class="text-xl font-bold text-white mb-1">ثبت نام اولیه</h3>
           <p class="text-sm text-gray-400 mb-6">برای کلاس: <span class="text-gold">{{ selectedClass?.title }}</span></p>
           <form @submit.prevent="submitRegistration" class="space-y-4">
             <div>
               <label class="text-xs text-gray-300 mb-1 block">نام و نام خانوادگی</label>
-              <input v-model="form.full_name" type="text" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none">
+              <input v-model="form.full_name" type="text" required class="w-[93%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none">
             </div>
             <div>
               <label class="text-xs text-gray-300 mb-1 block">شماره تماس</label>
-              <input v-model="form.phone" type="tel" required class="w-[75%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none dir-ltr text-right">
+              <input v-model="form.phone" type="tel" required class="w-[93%] bg-black/50 border border-white/20 rounded-lg px-3 py-3 text-white focus:border-gold outline-none dir-ltr text-right">
             </div>
             <button type="submit" :disabled="submitting" class="w-full btn-primary py-3 rounded-xl font-bold flex justify-center items-center gap-2">
               <span v-if="submitting" class="i-heroicons-arrow-path animate-spin"></span>

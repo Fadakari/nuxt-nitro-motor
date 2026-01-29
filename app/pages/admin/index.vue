@@ -47,6 +47,22 @@
           <span class="text-xs text-gray-500">اخبار و کنسرت</span>
         </NuxtLink>
 
+        <NuxtLink to="/admin/news" class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-white/5 active:scale-95 transition-all cursor-pointer group border border-white/10">
+          <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors text-red-400">
+            <span class="i-heroicons-megaphone text-3xl"></span>
+          </div>
+          <span class="text-white font-bold">اخبار فوری</span>
+          <span class="text-xs text-gray-500">اطلاعیه‌های مهم</span>
+        </NuxtLink>
+
+        <NuxtLink to="/admin/settings" class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-white/5 active:scale-95 transition-all cursor-pointer group border border-white/10">
+          <div class="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors text-red-400">
+            <span class="i-heroicons-megaphone text-3xl"></span>
+          </div>
+          <span class="text-white font-bold">تنظیمات</span>
+          <span class="text-xs text-gray-500">تغییرات عمومی</span>
+        </NuxtLink>
+
         <NuxtLink to="/" class="glass-panel p-6 flex flex-col items-center justify-center gap-3 hover:bg-white/5 active:scale-95 transition-all cursor-pointer group border border-white/10">
           <div class="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors text-blue-400">
             <span class="i-heroicons-eye text-3xl"></span>

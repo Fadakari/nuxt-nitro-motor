@@ -67,6 +67,13 @@
               <input type="checkbox" v-model="form.is_important" id="impCheck" class="w-4 h-4 accent-purple-500">
               <label for="impCheck" class="text-sm text-purple-200 cursor-pointer select-none font-bold">نمایش ویژه در صفحه اصلی؟</label>
           </div>
+
+          <div class="flex items-center gap-2 bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/20 mt-2">
+              <input type="checkbox" v-model="form.is_hero" id="heroCheck" class="w-4 h-4 accent-yellow-500">
+              <label for="heroCheck" class="text-sm text-yellow-200 cursor-pointer select-none font-bold">
+                نمایش به عنوان بنر بزرگ (Hero)؟
+              </label>
+          </div>
         
           <div class="flex gap-2 pt-2">
             <button type="submit" :disabled="loading" class="flex-1 btn-primary bg-purple-600 hover:bg-purple-700 py-2 rounded-lg text-sm font-bold flex justify-center items-center gap-2">
@@ -141,7 +148,8 @@ const form = reactive({
   content: '',
   image_url: '',
   event_date: '',
-  is_important: false
+  is_important: false,
+  is_hero: false
 })
 
 const fetchData = async () => {
@@ -187,7 +195,8 @@ const saveEvent = async () => {
       content: form.content,
       image_url: form.image_url,
       event_date: form.event_date || new Date().toISOString(),
-      is_important: form.is_important
+      is_important: form.is_important,
+      is_hero: form.is_hero
     }
 
     if (isEditing.value) {
@@ -211,6 +220,7 @@ const editEvent = (ev: any) => {
   form.content = ev.content
   form.image_url = ev.image_url
   form.is_important = ev.is_important
+  form.is_hero = ev.is_hero
 
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
@@ -238,6 +248,7 @@ const resetForm = () => {
   form.image_url = ''
   form.event_date = ''
   form.is_important = false
+  form.is_hero = false
 }
 
 const getPublicUrl = (path: string) => {

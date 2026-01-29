@@ -9,7 +9,8 @@
           :src="getPublicUrl(featuredEvent.image_url)" 
           class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 filter brightness-75 group-hover:brightness-100"
         />
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.6)_15%,transparent_50%,rgba(0,0,0,0.6)_85%,black_100%)]"></div>
+
       </div>
 
       <div class="relative z-10 container-center pb-16 w-full">
@@ -41,6 +42,9 @@
         </div>
       </div>
     </div>
+
+
+    
 
     <div class="container-center pt-16 relative z-10">
       
@@ -185,13 +189,16 @@ const selectedEvent = ref(null)
 const searchQuery = ref('')
 
 const { data: events, pending } = await useAsyncData('all_events', async () => {
-  const { data } = await client.from('events').select('*').order('event_date', { ascending: false })
+  const { data } = await client
+    .from('events')
+    .select('*')
+    .order('event_date', { ascending: false })
   return data || []
 })
 
 const featuredEvent = computed(() => {
   if (!events.value) return null
-  return events.value.find(e => e.is_important) || events.value[0]
+  return events.value.find(e => e.is_hero === true) || null
 })
 const otherEvents = computed(() => {
   if (!events.value) return []

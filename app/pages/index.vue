@@ -62,7 +62,61 @@
       </div>
     </div>
 
-    <div class="relative z-10 bg-black/80 backdrop-blur-xl border-t border-white/10 py-20">
+
+    
+
+    <div class="relative z-10 bg-black/80 backdrop-blur-xl border-t border-white/10 pb-20">
+      <div class="relative w-full pt-0 pb-12 px-4 sm:px-6">
+      
+
+      <div class="container-center relative z-10">
+        
+        <div class="flex items-center gap-3 mb-8">
+          <div class="w-1.5 h-8 bg-red-500 rounded-full animate-pulse"></div>
+          <h2 class="text-2xl font-bold text-white">تابلو اعلانات <span class="text-red-500">فوری</span></h2>
+        </div>
+
+        <div v-if="newsItems && newsItems.length > 0" class="space-y-4 space-x-4">
+          <div 
+            v-for="item in newsItems" 
+            :key="item.id"
+            @click="openModal(item)"
+            class="cursor-pointer glass-panel p-6 border-l-4 relative overflow-hidden group hover:bg-white/5 transition-all"
+            :class="item.priority >= 2 ? 'border-l-red-500 bg-red-500/5' : 'border-l-gold bg-white/5'"
+          >
+            <span class="absolute -right-4 -top-4 text-8xl opacity-5 group-hover:opacity-10 transition-opacity" 
+              :class="item.priority >= 2 ? 'i-heroicons-exclamation-triangle text-red-500' : 'i-heroicons-information-circle text-gold'">
+            </span>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-3 mb-2">
+                  <span v-if="item.priority >= 2" class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded animate-pulse">فوری</span>
+                  <span class="text-gray-500 text-xs flex items-center gap-1">
+                    <span class="i-heroicons-calendar"></span>
+                    {{ new Date(item.created_at).toLocaleDateString('fa-IR') }}
+                  </span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">{{ item.title }}</h3>
+                <p class="text-gray-300 text-sm leading-relaxed max-w-3xl">{{ item.content }}</p>
+              </div>
+              
+              <div v-if="item.priority >= 10" class="shrink-0">
+                <span class="i-heroicons-star text-gold text-2xl"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="glass-panel p-8 text-center border border-white/10 opacity-70">
+          <span class="i-heroicons-check-circle text-4xl text-green-500 mb-3"></span>
+          <p class="text-white font-bold">هیچ اطلاعیه جدیدی وجود ندارد.</p>
+          <p class="text-sm text-gray-500">تمامی کلاس‌ها طبق برنامه در حال برگزاری است.</p>
+        </div>
+
+      </div>
+    </div>
+
       <div class="container-center">
         
         <div class="flex items-center justify-between mb-10">
@@ -87,7 +141,8 @@
           <div 
             v-for="event in events" 
             :key="event.id" 
-            class="group glass-panel flex flex-col sm:flex-row overflow-hidden hover:border-gold/50 transition-all duration-300"
+            @click="openModal(event)"
+            class="cursor-pointer group glass-panel flex flex-col sm:flex-row overflow-hidden hover:border-gold/50 transition-all duration-300"
           >
             <div class="sm:w-2/5 h-48 sm:h-auto relative bg-gray-800">
               <img 
@@ -131,6 +186,44 @@
     <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gold/10 blur-[100px] rounded-full pointer-events-none"></div>
 
   </div>
+
+
+  <Transition 
+      enter-active-class="transition duration-500 cubic-bezier(0.16, 1, 0.3, 1)" 
+      enter-from-class="translate-y-full opacity-0" 
+      enter-to-class="translate-y-0 opacity-100" 
+      leave-active-class="transition duration-300 ease-in" 
+      leave-from-class="translate-y-0 opacity-100" 
+      leave-to-class="translate-y-full opacity-0"
+    >
+      <div v-if="selectedItem" class="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
+        
+        <button @click="closeModal" class="absolute top-6 left-6 z-20 w-12 h-12 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all border border-white/20">
+          <span class="i-heroicons-x-mark text-2xl"></span>
+        </button>
+
+        <div class="h-[40vh] w-full relative flex-shrink-0 bg-gray-900">
+          <img v-if="selectedItem.image_url" :src="getPublicUrl(selectedItem.image_url)" class="w-full h-full object-cover">
+          <div v-else class="w-full h-full flex items-center justify-center text-white/10">
+            <span class="i-heroicons-photo text-6xl"></span>
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto bg-black pb-20 px-6">
+          <div class="container-center py-8 max-w-3xl mx-auto">
+            <span class="text-gold text-xs font-bold mb-4 block">
+              {{ new Date(selectedItem.created_at).toLocaleDateString('fa-IR') }}
+            </span>
+            <h1 class="text-3xl font-bold text-white mb-8 leading-tight">{{ selectedItem.title }}</h1>
+            
+            <div class="text-gray-300 leading-9 whitespace-pre-line text-justify text-lg font-light">
+              {{ selectedItem.content || selectedItem.description }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
 </template>
 
 <style scoped>
@@ -148,6 +241,38 @@
 <script setup lang="ts">
 // دریافت رویدادهای مهم از دیتابیس
 const client = useSupabaseClient()
+const selectedItem = ref(null)
+
+// تابع باز کردن مودال
+const openModal = (item: any) => {
+  selectedItem.value = item
+  document.body.style.overflow = 'hidden'
+}
+
+// تابع بستن مودال
+const closeModal = () => {
+  selectedItem.value = null
+  document.body.style.overflow = ''
+}
+
+// تابع کمکی برای عکس
+const getPublicUrl = (path: string) => {
+  if (!path) return ''
+  if (path.startsWith('http')) return path
+  const { data } = client.storage.from('images').getPublicUrl(path)
+  return data.publicUrl
+}
+
+const { data: newsItems } = await useAsyncData('home_news', async () => {
+  const { data } = await client
+    .from('news')
+    .select('*')
+    .eq('is_active', true)
+    .order('priority', { ascending: false }) // اولویت بالاتر
+    .order('created_at', { ascending: false }) // جدیدترین
+    .limit(3) // فقط ۳ تای اول را نشان بده
+  return data || []
+})
 
 const { data: events, pending } = await useAsyncData('important-events', () => 
   $fetch('/api/events-cached'), 
@@ -155,12 +280,4 @@ const { data: events, pending } = await useAsyncData('important-events', () =>
   lazy: true,
   server: false
 })
-
-// تابع عکس
-const getPublicUrl = (path: string) => {
-  if (!path) return ''
-  if (path.startsWith('http')) return path
-  const { data } = client.storage.from('images').getPublicUrl(path)
-  return data.publicUrl
-}
 </script>

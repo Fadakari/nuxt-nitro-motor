@@ -43,7 +43,17 @@
             </div>
 
             <div>
-              <label class="text-xs text-gray-400 mb-2 block">تخصص‌ها (سازها)</label>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs text-gray-400">تخصص‌ها (سازها)</label>
+                <button 
+                  type="button" 
+                  @click="showInstModal = true"
+                  class="text-[15px] bg-dark-1 rounded-xl text-green-400 hover:text-green-300 flex items-center gap-1 border border-green-500/30 px-2 py-0.5 rounded transition-colors"
+                >
+                  <span class="i-heroicons-plus"></span>
+                  افزودن ساز
+                </button>
+              </div>
               <div class="flex flex-wrap gap-2 bg-black/30 p-3 rounded-lg border border-white/10 max-h-40 overflow-y-auto">
                 <label 
                   v-for="inst in instruments" 
@@ -55,6 +65,7 @@
                 </label>
               </div>
             </div>
+            <AddInstrumentModal v-if="showInstModal" @close="showInstModal = false" @refresh="refreshInstruments" />
 
           <div class="mb-4">
             <ImageUploader v-model="form.image_url" />
@@ -150,7 +161,13 @@ const loading = ref(false)
 const uploading = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
+const showInstModal = ref(false) // <--- این خط اضافه شود
 
+// تابعی جداگانه برای گرفتن فقط سازها (برای رفرش سریع)
+const refreshInstruments = async () => {
+  const { data } = await client.from('instruments').select('*')
+  instruments.value = data || []
+}
 // فرم
 const form = reactive({
   full_name: '',

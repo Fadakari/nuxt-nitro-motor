@@ -42,7 +42,17 @@
               </select>
             </div>
             <div>
-              <label class="text-xs text-gray-400 mb-2 block">سازهای مرتبط</label>
+              <div class="flex justify-between items-center mb-2">
+                <label class="text-xs text-gray-400">سازهای مرتبط</label>
+                <button 
+                  type="button" 
+                  @click="showInstModal = true"
+                  class="text-[15px] bg-dark-1 rounded-xl text-green-400 hover:text-green-300 flex items-center gap-1 border border-green-500/30 px-2 py-0.5 rounded transition-colors"
+                >
+                  <span class="i-heroicons-plus"></span>
+                  جدید
+                </button>
+              </div>
               <div class="bg-black/30 p-3 rounded-lg border border-white/10 max-h-32 overflow-y-auto grid grid-cols-2 gap-2">
                 <label v-for="inst in instrumentsList" :key="inst.id" class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
                   <input type="checkbox" :value="inst.id" v-model="form.instrument_ids" class="accent-primary rounded">
@@ -50,6 +60,7 @@
                 </label>
               </div>
             </div>
+            <AddInstrumentModal v-if="showInstModal" @close="showInstModal = false" @refresh="refreshInstruments" />
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="text-xs text-gray-400 mb-1 block">شهریه (تومان)</label>
@@ -160,7 +171,13 @@ const fetching = ref(true) // <--- متغیر جدید
 const loading = ref(false)
 const isEditing = ref(false)
 const editId = ref(null)
+const showInstModal = ref(false) // <--- اضافه شود
 
+// تابع رفرش
+const refreshInstruments = async () => {
+  const { data } = await client.from('instruments').select('*')
+  instrumentsList.value = data || [] // دقت کنید اینجا نام متغیر instrumentsList بود
+}
 const form = reactive({
   title: '',
   teacher_id: '',

@@ -43,20 +43,28 @@
           <p class="text-gray-400 text-sm">مدرسین حرفه‌ای ما را بر اساس ساز یا نام جستجو کنید.</p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <select v-model="selectedInstrument" class="bg-black border border-white/10 rounded-xl px-4 py-2 w-[75%] text-white focus:border-gold outline-none">
+        <div class="flex flex-wrap flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <select v-model="selectedInstrument" class="bg-black border border-white/10 rounded-xl px-4 py-2 w-[100%] text-white focus:border-gold outline-none">
             <option value="">همه سازها</option>
             <option v-for="inst in instruments" :key="inst.id" :value="inst.id">{{ inst.name }}</option>
           </select>
 
-          <div class="relative">
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="جستجوی نام استاد..." 
-              class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 pr-10 text-white focus:border-gold outline-none w-[75%]"
-            />
-            <span class="i-heroicons-magnifying-glass absolute right-3 top-2.5 text-gray-400"></span>
+          <div class="relative w-[100%] md:w-80 group z-20">
+          
+            <div class="absolute -inset-0.5 bg-gradient-to-r from-gold to-primary rounded-xl blur opacity-20 group-focus-within:opacity-100 group-hover:opacity-60 transition duration-500"></div>
+            
+            <div class="relative flex items-center bg-[#0a0a0a] rounded-xl overflow-hidden">
+              <input 
+                v-model="searchQuery"
+                type="text" 
+                placeholder="نام کنسرت، هنرمند یا..." 
+                class="w-[100%] bg-transparent border-none px-4 py-3.5 pl-12 text-white placeholder-gray-500 focus:ring-0 focus:outline-none transition-all"
+              >
+              <span class="absolute left-4 flex items-center justify-center">
+                <span class="i-heroicons-magnifying-glass text-xl text-gray-500 group-focus-within:text-gold transition-colors duration-300"></span>
+              </span>
+            </div>
+
           </div>
         </div>
       </div>
@@ -181,7 +189,7 @@
           </p>
         </div>
 
-        <div class="mt-10 pt-6 border-t border-white/10 flex justify-end">
+        <div class="mt-10 pt-6 pe-8 border-t border-white/10 flex justify-end">
           <NuxtLink 
             :to="{ path: '/classes', query: { teacher: selectedTeacher.id } }" 
             class="btn-primary flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-105 transition-transform"

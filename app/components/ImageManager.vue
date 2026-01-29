@@ -112,8 +112,8 @@ onMounted(() => {
           <span class="i-heroicons-photo text-gold"></span>
           مدیریت تصاویر
         </h3>
-        <button @click="$emit('close')" class="text-gray-400 hover:text-white transition-colors">
-          <span class="i-heroicons-x-mark text-2xl"></span>
+        <button @click="$emit('close')" class="transition-all rounded-[1rem] p-1 px-3 bg-dark-1 text-red-400 hover:text-white hover:bg-white/30">
+          بستن
         </button>
       </div>
 
