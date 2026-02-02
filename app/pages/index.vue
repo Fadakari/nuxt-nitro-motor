@@ -90,10 +90,10 @@
 
     <div class="relative z-10 bg-black border-t border-white/10">
       
-      <div class="relative w-full py-16 px-4 sm:px-6">
+      <div class="relative w-full py-16 px-0 sm:px-0">
         <div class="w-full max-w-7xl mx-auto relative z-10">
           
-          <div class="flex items-center gap-3 mb-8">
+          <div class="flex items-center gap-3 mb-8 ps-3">
             <div class="w-1.5 h-8 bg-red-500 rounded-full animate-pulse"></div>
             <h2 class="text-2xl font-bold text-white">تابلو اعلانات <span class="text-red-500">فوری</span></h2>
           </div>
@@ -138,9 +138,9 @@
         </div>
       </div>
 
-      <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pb-20">
+      <div class="w-full max-w-7xl mx-auto px-0 sm:px-0 pb-20">
          <div class="flex items-center justify-between mb-10">
-            <div>
+            <div class="ps-3">
               <h2 class="text-3xl font-bold text-white mb-2">
                 <span class="text-primary ml-2">رویدادهای</span>
                 <span class="text-gold">ویژه</span>
