@@ -103,7 +103,7 @@
                 v-for="item in newsItems" 
                 :key="item.id"
                 @click="openModal(item)"
-                class="cursor-pointer glass-panel p-6 border-l-4 relative overflow-hidden group hover:bg-white/5 transition-all w-full"
+                class="cursor-pointer glass-panel p-6 border-l-4 relative overflow-hidden group hover:bg-white/5 transition-all mx-auto w-[80%]"
                 :class="item.priority >= 2 ? 'border-l-red-500 bg-red-500/5' : 'border-l-gold bg-white/5'"
               >
                 <span class="absolute -right-4 -top-4 text-8xl opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none" 
@@ -162,7 +162,7 @@
               v-for="event in events" 
               :key="event.id" 
               @click="openModal(event)"
-              class="cursor-pointer group glass-panel flex flex-col sm:flex-row overflow-hidden hover:border-gold/50 transition-all duration-300 w-full"
+              class="cursor-pointer group glass-panel flex flex-col sm:flex-row overflow-hidden hover:border-gold/50 transition-all duration-300 mx-auto w-[90%]"
             >
               <div class="w-full sm:w-2/5 h-48 sm:h-auto relative bg-gray-800 shrink-0">
                 <img 
