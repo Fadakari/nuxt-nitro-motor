@@ -3,7 +3,7 @@
     class="fixed top-0 inset-x-0 z-50 transition-all duration-500 border-b"
     :class="scrolled ? 'bg-black/50 backdrop-blur-xl border-white/10 py-2' : 'bg-transparent border-transparent py-4'"
   >
-    <div class="container-center">
+    <div class="container-center mx-auto">
       <div class="flex items-center justify-between">
         
         <NuxtLink to="/" class="flex items-center gap-3 group relative z-50 no-underline">
@@ -46,7 +46,7 @@
           <button 
             @click="toggleMenu" 
             class="md:hidden relative z-50 w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/10 text-white active:scale-95 transition-all"
-            :class="isOpen ? 'bg-gold text-black border-gold' : ''"
+            :class="isOpen ? 'bg-gold text-white border-gold' : ''"
           >
             <span class="text-2xl transition-transform duration-300" :class="isOpen ? 'i-heroicons-x-mark rotate-90' : 'i-heroicons-bars-3-bottom-right'"></span>
           </button>

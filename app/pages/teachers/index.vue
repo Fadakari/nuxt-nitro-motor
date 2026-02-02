@@ -264,4 +264,7 @@ const getPublicUrl = (path: string) => {
   const { data } = client.storage.from('images').getPublicUrl(path)
   return data.publicUrl
 }
+onUnmounted(() => {
+  document.body.style.overflow = ''
+})
 </script>
