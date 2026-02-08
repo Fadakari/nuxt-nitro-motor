@@ -36,8 +36,8 @@ export default defineNuxtConfig({
 
   site: {
     url: 'https://behzadheydari.ir',
-    name: 'بهزاد حیدری',
-    description: 'وبسایت رسمی بهزاد حیدری، کارآفرین نمونه، نویسنده و متخصص ابزارآلات صنعتی',
+    name: 'آکادمی اوزان',
+    description: 'منوی اساتید، کلاس‌ها و رویدادها و اخبار آکادمی اوزان',
     defaultLocale: 'fa', 
     indexable: true,
   },
@@ -45,7 +45,7 @@ export default defineNuxtConfig({
   schemaOrg: {
     identity: {
       type: 'Person',
-      name: 'بهزاد حیدری',
+      name: 'آکادمی اوزان',
       image: '/me.jpg',
       url: 'https://behzadheydari.ir'
     }

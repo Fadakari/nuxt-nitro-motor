@@ -38,10 +38,10 @@
 
         <div class="flex items-center gap-4">
           
-          <NuxtLink to="/admin/login" class="hidden md:flex items-center gap-2 text-xs font-bold text-gold border border-gold/30 px-4 py-2 rounded-xl hover:bg-gold hover:text-black transition-all no-underline">
+          <!-- <NuxtLink to="/admin/login" class="hidden md:flex items-center gap-2 text-xs font-bold text-gold border border-gold/30 px-4 py-2 rounded-xl hover:bg-gold hover:text-black transition-all no-underline">
             <span>پنل اساتید</span>
             <span class="i-heroicons-arrow-left"></span>
-          </NuxtLink>
+          </NuxtLink> -->
 
           <button 
             @click="toggleMenu" 
@@ -89,10 +89,10 @@
         </div>
 
         <div class="mt-8 border-t border-white/10 pt-6 space-y-4">
-          <NuxtLink to="/admin/login" @click="toggleMenu" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold text-black font-bold shadow-lg shadow-gold/20 active:scale-95 transition-transform no-underline">
+          <!-- <NuxtLink to="/admin/login" @click="toggleMenu" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-gold text-black font-bold shadow-lg shadow-gold/20 active:scale-95 transition-transform no-underline">
             <span class="i-heroicons-user"></span>
             <span>ورود به پنل مدیریت</span>
-          </NuxtLink>
+          </NuxtLink> -->
           
           <div class="flex justify-center gap-6 text-gray-500">
             <a href="#" class="hover:text-white transition-colors no-underline"><span class="i-simple-icons-instagram text-2xl"></span></a>

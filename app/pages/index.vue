@@ -11,14 +11,14 @@
             :srcset="getPublicUrl(siteInfo.hero_mobile)" 
           />
           <img 
-            :src="siteInfo.hero_desktop ? getPublicUrl(siteInfo.hero_desktop) : '/ourpicture.jpg'" 
+            :src="siteInfo.hero_desktop ? getPublicUrl(siteInfo.hero_desktop) : '/'" 
             alt="Ozan Academy Atmosphere" 
             class="block w-full h-full object-cover opacity-60"
           />
         </picture>
         <img 
           v-else
-          src="/ourpicture.jpg" 
+          src="/" 
           alt="Ozan Academy Atmosphere" 
           class="block w-full h-full object-cover opacity-60"
         />
@@ -49,7 +49,7 @@
               <span>شروع ثبت‌نام</span>
               <span class="i-heroicons-arrow-left group-hover:-translate-x-1 transition-transform"></span>
             </NuxtLink>
-            <NuxtLink to="/services" class="btn-gold no-underline flex items-center justify-center gap-3 mx-auto text-base md:text-lg py-3.5 px-8 backdrop-blur-sm bg-black/20 w-[75%]">
+            <NuxtLink to="/teachers" class="btn-gold no-underline flex items-center justify-center gap-3 mx-auto text-base md:text-lg py-3.5 px-8 backdrop-blur-sm bg-black/20 w-[75%]">
               <span>مشاهده اساتید</span>
               <span class="i-heroicons-users"></span>
             </NuxtLink>
